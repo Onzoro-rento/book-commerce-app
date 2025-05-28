@@ -1,16 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono,Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
+import Header from "./components/Header"
+import { SessionProvider } from "next-auth/react";
+import { NextAuthProvider } from "./lib/next-auth/provider";
+import { Suspense } from "react";
+import Loading from "./loading";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const notoSansJP = Noto_Sans_JP({ subsets:["latin"],weight:["400"]});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,11 +20,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ja">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+        className={notoSansJP.className}>
+        <NextAuthProvider>
+          <Header />
+        <Suspense fallback={<Loading/>}>{children}</Suspense>
+        </NextAuthProvider>
       </body>
     </html>
   );
