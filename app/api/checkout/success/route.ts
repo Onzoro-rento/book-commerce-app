@@ -4,7 +4,7 @@ import prisma from "@/app/lib/prisma";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-export async function POST(request: Request, Response: Response) {
+export async function POST(request: Request) {
 
     const {sessionId} = await request.json();
     try {
