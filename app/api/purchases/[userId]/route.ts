@@ -1,21 +1,24 @@
 import prisma from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
 
-//https://nextjs.org/docs/app/building-your-application/routing/route-handlers#dynamic-route-segments
+// /app/api/purchases/[userId]/route.ts
+type Params = Promise<{ userId: string }>;
+
 export async function GET(
-  request: Request,
-  { params }: { params: { userId: string } }
+  _req: Request,
+  { params }: { params: Params }
 ) {
-  const userId = params.userId;
+  // Promise なので await する
+  const { userId } = await params;
 
   try {
-    const purchase = await prisma.purchase.findMany({
-      where: { userId: userId },
-    });
-    console.log(purchase);
-
-    return NextResponse.json(purchase);
-  } catch (err) {
-    return NextResponse.json(err);
+    const purchases = await prisma.purchase.findMany({ where: { userId } });
+    return NextResponse.json(purchases);
+  } catch (error) {
+    console.error("購入履歴の取得エラー:", error);
+    return NextResponse.json(
+      { error: "購入履歴の取得に失敗しました。" },
+      { status: 500 }
+    );
   }
 }
